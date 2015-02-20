@@ -13,7 +13,7 @@ exports.lego = backbone.Model.extend4000
         
         @settings = _.extend {
             static: h.path(@env.root, 'static')
-            views: h.path(@env.root, 'static')
+            views: h.path(@env.root, 'ejs')
             port: 80
         }, @settings
 

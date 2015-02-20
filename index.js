@@ -23,7 +23,7 @@
       this.env.app = app = express();
       this.settings = _.extend({
         "static": h.path(this.env.root, 'static'),
-        views: h.path(this.env.root, 'static'),
+        views: h.path(this.env.root, 'ejs'),
         port: 80
       }, this.settings);
       if (this.settings.configure) {
