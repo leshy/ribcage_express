@@ -4,6 +4,7 @@ express = require 'express'
 ejslocals = require 'ejs-locals'
 h = require 'helpers'
 _ = require 'underscore'
+util = require 'util'
 
 exports.lego = backbone.Model.extend4000
     requires: 'logger'
@@ -32,9 +33,10 @@ exports.lego = backbone.Model.extend4000
                 app.use app.router
                 app.use express.static(@settings.static)
                 app.use (err, req, res, next) =>
-                    @env.log 'web request error', { stack: err.stack }, 'error', 'http'
-                    console.log err
-                    res.send 500, 'error 500'
+                    @env.log 'web request error', { error: util.inspect(err) }, 'error', 'http'
+                    console.error util.inspect(err)
+                    if @env.settings.dev then res.send 500, util.inspect(err)
+                    else res.send 500, 'error 500'
             
         @env.http = http.createServer @env.app
         @env.http.listen @settings.port
