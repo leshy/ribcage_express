@@ -69,7 +69,8 @@
               host = forwarded;
             }
           }
-          _this.env.log(host + " " + req.method + " " + req.originalUrl, {
+          _this.env.log(host + " " + req.method + " " + req.originalUrl + " [" + req.headers['user-agent'] + "]", {
+            url: req.originalUrl,
             level: 2,
             ip: host,
             headers: req.headers,
