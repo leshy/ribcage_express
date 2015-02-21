@@ -19,7 +19,7 @@
   exports.lego = backbone.Model.extend4000({
     requires: 'logger',
     init: function(callback) {
-      var app;
+      var app, logreq;
       this.env.app = app = express();
       this.settings = _.extend({
         "static": h.path(this.env.root, 'static'),
@@ -60,6 +60,26 @@
       this.env.http = http.createServer(this.env.app);
       this.env.http.listen(this.settings.port);
       this.env.log('express listening at ' + this.settings.port, {}, 'init', 'ok');
+      logreq = (function(_this) {
+        return function(req, res, next) {
+          var forwarded, host;
+          host = req.socket.remoteAddress;
+          if (host === "127.0.0.1") {
+            if (forwarded = req.headers['x-forwarded-for']) {
+              host = forwarded;
+            }
+          }
+          _this.env.log(host + " " + req.method + " " + req.originalUrl, {
+            level: 2,
+            ip: host,
+            headers: req.headers,
+            method: req.method
+          }, 'http', req.method, host);
+          return next();
+        };
+      })(this);
+      this.env.app.get('*', logreq);
+      this.env.app.post('*', logreq);
       return callback();
     }
   });

@@ -42,4 +42,13 @@ exports.lego = backbone.Model.extend4000
         @env.http.listen @settings.port
         @env.log 'express listening at ' + @settings.port, {}, 'init','ok'
         
+        logreq = (req,res,next) =>
+            host = req.socket.remoteAddress
+            if host is "127.0.0.1" then if forwarded = req.headers['x-forwarded-for'] then host = forwarded
+            @env.log host + " " + req.method + " " + req.originalUrl, { level: 2, ip: host, headers: req.headers, method: req.method }, 'http', req.method, host
+            next()
+
+        @env.app.get '*', logreq
+        @env.app.post '*', logreq
+                
         callback()
